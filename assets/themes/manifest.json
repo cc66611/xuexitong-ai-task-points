@@ -1,0 +1,37 @@
+[
+  {
+    "id": "nailoong",
+    "file": "assets/themes/nailoong.png",
+    "mime": "image/png",
+    "source": "https://www.nailoong.com/_ipx/q_85/img/business/nl_base_3d.png",
+    "page": "https://www.nailoong.com/business/ipIncubation/",
+    "sha256": "72062899ee3c46390af4a36d4fbc86d700febf0a014768c1ec39693d7083a390",
+    "edit": "内置 imagegen 清除描边和背景残留，透明 PNG；关闭 UI 外部投影。",
+    "processing": "2026-10-21 内置 imagegen 清除白色描边与灰色边缘；透明 PNG，外部阴影关闭"
+  },
+  {
+    "id": "naiwa",
+    "file": "assets/themes/naiwa.png",
+    "mime": "image/png",
+    "source": "用户提供的奶蛙形象，经内置 imagegen 去除背景",
+    "sha256": "b58d17e1c80b96b3203b43eda96574ee1f1f1d6bc9b37606fda78a4c12939db3",
+    "edit": "内置 imagegen 清除描边和背景残留，透明 PNG；关闭 UI 外部投影。",
+    "processing": "2026-10-21 内置 imagegen 清除白色描边与灰色边缘；透明 PNG，外部阴影关闭"
+  },
+  {
+    "id": "ridge",
+    "file": "assets/themes/ridge.png",
+    "mime": "image/png",
+    "source": "Original artwork generated with built-in imagegen; reference used for style only.",
+    "sha256": "0ac4288adfb198ddfcd2c32b26d694c92da0fbfbff9321c6da728a55c12c91d7",
+    "processing": "2026-10-27 original PNG, no text or UI; full theme colours implemented separately in CSS."
+  },
+  {
+    "id": "tide",
+    "file": "assets/themes/tide.png",
+    "mime": "image/png",
+    "source": "Original artwork generated with built-in imagegen; reference used for style only.",
+    "sha256": "ca1a76de6a00ed618883f1ce9bf230a7d2d4185bb6999db7c5253b2b1079b9a9",
+    "processing": "2026-10-27 original PNG, no text or UI; full theme colours implemented separately in CSS."
+  }
+]

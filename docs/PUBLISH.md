@@ -1,0 +1,106 @@
+# 开发与发布指南
+
+项目仓库：[Flyer2333/xuexitong-ai-assistant](https://github.com/Flyer2333/xuexitong-ai-assistant)。
+
+本文供维护者和希望修改源码的用户使用。只想安装脚本，请阅读 [安装教程](INSTALL.md)。创建自己的派生仓库时，将示例中的 `YOUR_NAME`、仓库名和版本替换为实际值。
+
+## 发布前检查
+
+每次更新（包括补丁和文档版本发布）先联网重查全部服务商官方模型目录、发布/下线公告及推理参数，更新 `src/models.cjs` 的 ID、模型能力、`verifiedAt` 与 `release`，并维护 [核查来源](MODELS.md)。读取失败的部分如实注明，不能仅更新日期充当核查。聚合平台使用自己的完整 ID 和参数范围，不照搬原厂。
+
+执行 `npm run check:models -- --release` 核对目录与当前版本、发布日期；普通 `npm test` 也会检查版本一致性。检查器只能发现目录结构和版本遗漏，不能代替联网检索，也不会自动认定网页上的任何字符串都是可用模型。
+
+1. 阅读根目录 `NOTICE.md`。上游再分发许可尚待确认，公开再分发前需核对许可范围或取得授权。
+2. 在干净的项目目录运行 `npm run build` 和 `npm test`。
+3. 检查待提交文件，排除 `src/local/`、`.env`、日志、浏览器用户数据、Key、连接码和课程私有 URL。需要提交 `dist` 中的安装脚本；它不包含用户配置。
+4. 如实写明测试范围：模拟测试通过不等于所有真实课程和服务商均已验证。不要承诺支持所有模型、永久免费或保证满分。
+
+## 通过 GitHub 网页上传
+
+1. 登录自己的 GitHub，右上角 **+ → New repository**。
+2. Repository name 填 `xuexitong-ai-assistant`，描述可填“学习通学习助手与可配置 AI API”。未完成授权核对时先保持 Private。
+3. 不需要在网页额外勾选生成 README、License，源码已经提供说明；不要随意给上游衍生文件套 MIT。
+4. 创建后点 **Add file → Upload files**。解压本源码 ZIP，将项目内文件和目录拖进去，保留 `src`、`scripts`、`docs`、`tests`、`vendor`、`assets`、`dist` 的层级。不要把 ZIP 本身当源码上传。
+5. 核对 `.gitignore` 和 `.github` 目录，包含自动检查配置及问题反馈模板。网页拖拽可能漏掉点开头的文件或目录，缺失时单独上传，或改用下方 Git 命令。
+6. 填提交说明，提交。到 **Actions** 检查构建与测试为绿色。
+7. 核对授权后在仓库 Settings 调整可见性；公开前再检查提交内容。
+
+## 通过 Git 命令上传
+
+在解压目录打开终端，逐条运行：
+
+```sh
+git init
+git add .
+git status --short
+git diff --cached --stat
+git commit -m "Prepare public AI assistant 1.0.9"
+git branch -M main
+git remote add origin https://github.com/YOUR_NAME/xuexitong-ai-assistant.git
+git push -u origin main
+```
+
+运行命令前，先在 GitHub 创建同名空仓库。登录可使用 GitHub 提供的方式、SSH 或凭据管理器，不要把访问令牌写进 remote URL。检查暂存区时发现私人文件，应先取消暂存，再继续提交。此方式同样需要确认上游许可。
+
+## 设置安装链接
+
+仓库上传后，打开 `dist/xuexitong-ai-assistant.user.js`，点击 **Raw**，复制真实地址。通常形如：
+
+```text
+https://raw.githubusercontent.com/YOUR_NAME/xuexitong-ai-assistant/main/dist/xuexitong-ai-assistant.user.js
+```
+
+将实际可访问的 Raw 地址放入 README 的安装入口，检查链接打开的是脚本代码。
+
+## 发布 Release
+
+1. 仓库 **Releases → Draft a new release**。
+2. 创建标签 `v1.0.9`，标题“超星学习通自动化脚本（支持接入各种主流AI模型api） 1.0.9”。
+3. 写明此次变化、支持的协议、测试范围、API 费用及来源许可情况。
+4. 上传 `dist/xuexitong-ai-assistant.user.js` 作为可安装附件；源码由 GitHub 自动生成 ZIP。
+5. 核对附件版本与标签一致，确认没有预填 Key，再发布。供用户安装的附件应为 `.user.js`；源码 ZIP 不能通过油猴的备份导入功能安装。
+
+## 更新版本
+
+修改 `src` 后，更新 `package.json`、`src/theme.js`、检查器版本断言和 CHANGELOG，再构建、测试并提交 dist，最后发布新 Release。保持 userscript 的 @name/@namespace 一致，让油猴能够识别同一个脚本。
+
+从 1.0.9 起配置固定仓库的 `@updateURL/@downloadURL`：检查版本读取 dist 中的 `.meta.js`，安装读取 `.user.js`。面板检查读取 `dist/release.json`。每次发布更新 `src/release.json` 的版本、日期和仅本次更新内容，构建同步生成三个产物，必须在同一提交发布；不要只上传 JSON 宣布一个尚未上传的脚本版本。
+
+面板通过固定来源的匿名请求检查更新，安装交给油猴；WLAN 开关只约束面板，不控制油猴独立检查计划。远端更新后的脚本仍有原有网络与存储权限，维护者应审查发布内容。用户步骤见[更新教程](UPDATES.md)。
+
+## 开发环境与测试
+
+开发需要 Node.js 20.11+；直接安装 `.user.js` 不需要 npm。构建和协议测试只使用 Node 内置模块：
+
+```sh
+npm run build
+npm test
+```
+
+浏览器测试开发依赖用 `npm install` 安装，再 `npx playwright install chromium`。测试默认读取本项目安装的 Playwright；也可把 `XXT_PLAYWRIGHT_PATH` 指向已经安装的 Playwright 包目录，不要写入项目源码。
+
+已安装 Chrome 时默认运行；要用 Playwright Chromium，把 `XXT_BROWSER_CHANNEL` 设为 `chromium`，测试会省略 channel 参数：
+
+```sh
+XXT_BROWSER_CHANNEL=chromium npm run test:browser
+```
+
+PowerShell 使用 `$env:XXT_BROWSER_CHANNEL = 'chromium'` 再执行命令。测试结果写入项目 `artifacts/`，该目录被 Git 忽略。默认测试使用模拟网站和模型，不需要真实 Key，也不会向真实课程提交答案；服务商账号与实际课程需要另外验证。
+
+关键隔离浏览器回归统一入口（先构建）：
+
+```sh
+npm run build
+XXT_BROWSER_CHANNEL=chromium npm run test:smoke
+```
+
+smoke 复用富文本填空与标准答案重做、同章双测验、提交后成绩恢复、停止/夜间取消四组脚本，并检查状态渲染去重。普通启动与持久上下文都遵循 `XXT_BROWSER_CHANNEL`，不修改调用者传入的选项。CI 使用固定版本的 Playwright，安装 Chromium 和系统依赖后运行 build、npm test、smoke，并上传观察记录。只配置 CI 或本地运行成功不等于远端 CI 已通过。
+
+`npm run test:notify` 单独运行渲染指标与边界检查，输出 `output/playwright/notify-render.json`；smoke 汇总在 `output/playwright/smoke.json`。其余复用脚本仍保留原 `artifacts/` 观察记录。前后测量可通过 `XXT_NOTIFY_BUNDLE` 指定冻结构建、`XXT_NOTIFY_OUTPUT` 指定输出，旧版设 `XXT_NOTIFY_BASELINE=1` 仅免除去重次数断言，功能和状态消息断言仍执行。测试只在注入的副本中暴露私有入口，不给安装脚本增加调试接口；每次读取当前存储，统计 DOM 写入，不以此推算实课速度、内存或费用。
+
+## 每次更新时维护说明
+
+- 新增功能同时写入 README 最前面的“产品功能”和完整功能说明，讲清操作方式与限制。
+- 在 README 最下面的“更新记录”时间表增加一行，填写日期、版本、更新类型和用户能感受到的具体变化；保留既有历史。
+- CHANGELOG 与时间表保持一致，只写功能、行为变化和问题修复。
+- 不把文档编辑过程、宣传文案增删、打包上传步骤、内部版本迁移或作者工作记录列为用户更新内容；这些信息留在本地任务进度中。

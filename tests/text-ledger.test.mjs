@@ -1,0 +1,45 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createRequire} from 'node:module';
+const require=createRequire(import.meta.url),C=require('../src/core.cjs'),R=require('../src/retry.cjs'),L=require('../src/run-ledger.cjs');
+const q={id:'q1',type:'blank',text:'填写两空',slots:2,options:[]};
+const answer={id:'q1',texts:['甲','乙'],choices:[],readable:true,confidence:1,explanation:'依据题意'};
+
+test('an enabled redo remains usable when the platform omits its remaining count',()=>{
+ assert.equal(C.nextAction({resultKnown:true,allCorrect:false,remaining:null,redoAvailable:true}),'redo');
+ assert.equal(C.nextAction({resultKnown:true,allCorrect:false,remaining:0,redoAvailable:true}),'skip');
+ assert.equal(C.nextAction({resultKnown:true,allCorrect:false,remaining:null,redoAvailable:false}),'skip');
+ assert.equal(C.nextAction({resultKnown:true,allCorrect:true,remaining:null,redoAvailable:true}),'advance');
+});
+test('text answers require exact slot mapping, nonempty values and confidence; never randomize text',()=>{
+ assert.deepEqual(C.resolveAnswers([q],{answers:[answer]})[0].texts,['甲','乙']);
+ assert.throws(()=>C.resolveAnswers([q],{answers:[{...answer,texts:['甲']}]}),/数量/);
+ const low=C.resolveAnswers([q],{answers:[{...answer,confidence:0.1}]},{randomizeUncertain:true})[0];
+ assert.deepEqual(low.texts,answer.texts);assert.equal(low.lowConfidence,true);assert(!low.randomized);
+ assert.throws(()=>C.resolveAnswers([q],{answers:[{...answer,readable:false}]},{randomizeUncertain:true}),/无法读清/);
+ assert.deepEqual(C.recallAnswers([q],[{question:q,texts:['甲','乙']}])[0].texts,['甲','乙']);
+ assert.equal(R.novel([q],[answer],[[answer]]).exhausted,true);
+ const plan=R.plan([q],[{questions:[q],answers:[answer],finalScore:0,maxScore:10}]);assert(plan.repeated([answer]));
+ assert(!plan.repeated([{...answer,texts:['丙','丁']}]));
+});
+test('a low-confidence complete blank does not block eleven objective answers',()=>{
+ const objective=Array.from({length:11},(_,i)=>({id:'choice'+i,type:'single',text:'题干',options:[{key:'A',text:'甲'},{key:'B',text:'乙'}]}));
+ const answers=objective.map(x=>({id:x.id,choices:['A'],readable:true,confidence:1,explanation:''}));
+ const result=C.resolveAnswers([...objective,q],{answers:[...answers,{...answer,confidence:0.5}]},{randomizeUncertain:true});
+ assert.equal(result.length,12);assert.deepEqual(result.at(-1).texts,['甲','乙']);assert(result.slice(0,11).every(a=>a.choices[0]==='A'));
+});
+test('central retry is scoped, bounded and excludes uncertain submission, changed catalog and legacy records',()=>{
+ const scope='course-class-account',catalog=[{index:0,title:'甲'},{index:1,title:'乙'}];
+ const records=[{scope,index:0,title:'甲'}, {scope,index:0,title:'甲'}, {scope,index:1,title:'乙',uncertainSubmission:true}, {scope:'other-account',index:1,title:'乙'},{index:1,title:'乙'}];
+ assert.deepEqual(L.plan(records,catalog,scope),[{index:0,title:'甲'}]);
+ assert.deepEqual(L.plan(records,[{index:0,title:'目录已变化'}],scope),[]);
+ const updated=L.record(records,{scope,index:0,title:'甲',reason:'未处理'});assert.equal(updated.filter(x=>x.scope===scope&&x.index===0).length,1);
+ assert(L.record([{scope,index:1,title:'乙',uncertainSubmission:true}],{scope,index:1,title:'乙',reason:'后来未识别'})[0].uncertainSubmission);
+});
+
+test('live catalog reconciliation removes completed records, restores newly pending and preserves uncertain or foreign entries',()=>{
+ const scope='scope',records=[{scope,index:0,title:'A',status:'pending'},{scope,index:1,title:'B',status:'pending',uncertainSubmission:true},{scope:'foreign',index:0,title:'A',status:'pending'}];
+ const catalog=[{title:'A',completion:'completed'},{title:'B',completion:'completed'}];
+ const updated=L.reconcile(records,catalog,scope);assert.equal(updated[0].status,'completed');assert.strictEqual(updated[1],records[1]);assert.strictEqual(updated[2],records[2]);assert.deepEqual(L.plan(updated,catalog,scope),[]);
+ assert.strictEqual(L.reconcile(updated,catalog,scope),updated);
+ catalog[0].completion='pending';const reopened=L.reconcile(updated,catalog,scope);assert.equal(reopened[0].status,'pending');assert.deepEqual(L.plan(reopened,catalog,scope),[{index:0,title:'A'}]);
+ assert.strictEqual(L.reconcile(records,[{title:'Changed',completion:'completed'}],scope),records);
+});

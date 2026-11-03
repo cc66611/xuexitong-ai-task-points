@@ -1,0 +1,33 @@
+name: Verify task-point release
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      XXT_BROWSER_CHANNEL: chromium
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+      - run: npm test
+      - run: git diff --exit-code -- dist
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:task-points
+      - run: npm run test:homework-combinations
+      - run: npm run test:formula-options
+      - run: npm run test:completion-priority
+      - run: npm run package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: source-and-userscript
+          path: |
+            artifacts/*-source.zip
+            artifacts/*-source.zip.sha256
+            dist/xuexitong-task-points-only.user.js
+            SOURCE_MANIFEST.json

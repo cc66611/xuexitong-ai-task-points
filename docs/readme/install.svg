@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="58" viewBox="0 0 366 76" role="img" aria-labelledby="title">
+<title id="title">一键安装 / 更新脚本</title>
+<rect x="1" y="4" width="364" height="71" rx="14" fill="#145b54"/>
+<rect x="1" y="1" width="364" height="71" rx="14" fill="#1d7b70"/>
+<rect x="15" y="14" width="44" height="44" rx="10" fill="#ffffff" fill-opacity=".14"/>
+<path d="M37 23v22m-8-8 8 8 8-8M25 45v7h24v-7" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="76" y="45" font-family="system-ui,Microsoft YaHei,sans-serif" font-size="23" font-weight="700" fill="#fff">一键安装 / 更新脚本</text>
+<path d="m335 31 6 6-6 6" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
