@@ -5,8 +5,8 @@
 ## 接手后的第一轮检查
 
 1. 在根目录确认 `package.json`、`src/`、`vendor/`、`assets/` 和 `dist/` 都在。用 `git status --short` 识别已有修改，不覆盖用户工作。
-2. 检查 `node --version`、`npm --version`、`codex --version` 和 `codex login status`。登录由用户在官方流程中完成，不收集账号密码或复制登录缓存。
-3. 读取 `package.json` 中的 `taskPointsVersion`。基础包版本与上游模型目录版本仍是 1.7.7，安装脚本与面板版本是 1.7.7.7，不要把它们混为一谈。
+2. 先确认用户选择的接入方式。Codex 检查 `codex --version`、`codex login status`；WorkBuddy 检查官方 CodeBuddy CLI 与同站点账号；API 检查实际协议、地址、模型和用途。共同检查 `node --version`、`npm --version`。登录由用户在官方流程中完成，不收集账号密码或复制登录缓存。
+3. 读取 `package.json` 中的 `taskPointsVersion`。基础包版本与上游模型目录版本仍是 1.7.7，安装脚本与面板版本是 1.7.7.8，不要把它们混为一谈。
 4. 安装开发依赖并构建，完成检查后再让用户安装。服务运行不依赖 Playwright；Playwright 只用于开发验证。
 
 ```bash
@@ -17,9 +17,9 @@ npm test
 
 ## 帮用户配置
 
-按照 [用户教程](USER_GUIDE.md) 安装脚本、启动服务。Windows 优先调用根目录 `.cmd`，它会查找 npm 安装的原生 Codex 程序；自定义位置使用 `XXT_CODEX_BIN`，不要把 `.cmd` 包装器交给无 shell 的进程启动器。
+按照 [用户教程](USER_GUIDE.md) 安装脚本、启动服务。Windows 按所选账号调用 `start-codex.cmd` 或 `start-workbuddy.cmd`。Codex 启动器查找原生程序，自定义位置使用 `XXT_CODEX_BIN`；WorkBuddy 启动器通过官方 CodeBuddy CLI 启动，自定义位置使用 `XXT_CODEBUDDY_BIN`。不要将题目拼接为 shell 命令。
 
-必须从项目根目录启动。服务只监听 `127.0.0.1:18763`；连接码首次运行生成在 `src/local/bridge-token.txt`。使用时可在本地请求头携带连接码，不输出到日志、PR、Issue、教程、截图或聊天。不要改成公网监听，也不要自动更换用户已有连接码。
+必须从项目根目录启动。Codex 服务默认监听 `127.0.0.1:18763`，连接码为 `src/local/bridge-token.txt`；WorkBuddy/CodeBuddy 默认 `127.0.0.1:18764`，连接码为 `src/local/codebuddy-token.txt`。API 版无需本项目服务，Key 由用户在油猴中本地填写，不索取到聊天或写入文件。使用时可在本地请求头携带连接码，不输出到日志、PR、Issue、教程、截图或聊天。不要改成公网监听，也不要自动更换用户已有连接码。
 
 模型和思考强度在 `npm run start:codex` 菜单选择，偏好保存在 `src/local/codex-launcher.json`。如需非交互方式，设置所选账号实际支持的 `XXT_CODEX_MODEL`、`XXT_CODEX_REASONING`、`XXT_CODEX_BIN`，再运行 `npm run start:codex:direct`。不要为了排错随意切换用户模型或认证方式。
 
@@ -43,7 +43,7 @@ npm test
 - `src/composite-questions.js`、`src/structured-questions.js`：组合、阅读/完形、排序、连线控件映射。
 - `src/homework-dom.js`、`src/homework-runtime.js`、`src/homework.cjs`：独立作业、编辑器、预览与提交策略。
 - `src/bridge.mjs`、`src/core.cjs`、`src/ai.js`：本地 CLI、共享校验、接口路由。
-- `scripts/build.mjs`、`scripts/build-task-only.mjs`：可复现构建。所有产物必须是仅任务点版。
+- `scripts/build-editions.mjs`、`scripts/build.mjs`、`scripts/build-task-only.mjs`：四个入口的可复现构建。所有产物必须是仅任务点版。
 - `scripts/check-public.mjs`、`scripts/package.mjs`：源码同步、隐私检查、源码 ZIP 与校验值。
 
 ## 不得破坏的行为
@@ -85,7 +85,7 @@ npm run package
 git status --short
 ```
 
-打包器输出 `artifacts/xuexitong-codex-task-points-1.7.7.7-source.zip`、SHA-256 和文件清单，逐文件核验 ZIP 内容。`src/local/`、`local/`、`output/`、`artifacts/`、`node_modules/`、`.git/`、环境文件、连接码及日志不可进入源码包或提交。
+打包器输出 `artifacts/xuexitong-ai-task-points-1.7.7.8-source.zip`、SHA-256 和文件清单，逐文件核验 ZIP 内容。`src/local/`、`local/`、`output/`、`artifacts/`、`node_modules/`、`.git/`、环境文件、连接码及日志不可进入源码包或提交。
 
 更新安装版本时同步 `package.json.taskPointsVersion` 和 `src/release.json.localVersion`，重新构建两个兼容脚本及元数据；基础包/模型目录版本若没有变化则保留。默认关闭上游自动更新，不能把用户导回原版整章模式。
 
@@ -94,3 +94,9 @@ git status --short
 ## 可选 GitHub Actions
 
 完整工作流模板保留在 [docs/ci/check.yml](ci/check.yml)。当前上传使用的 Git 凭据没有 `workflow` 权限，因此不在本仓库启用自动工作流，也不扩大用户账号权限。需要启用时，由有相应权限的维护者把该文件复制到 `.github/workflows/check.yml` 并正常提交。模板使用 Node.js 22、锁文件、仅任务点构建与模拟浏览器回归，不需要账号密钥。
+
+## 多 AI 版本与验收
+
+`npm run build` 统一生成 `dist/editions.json` 中列出的通用、Codex、WorkBuddy、API 四个完整入口。只在 `src/release.json` / 构建元数据中指定首次预设，不复制业务代码分叉；所有适配器都保留，已有接口设置优先于新预设。两个本地 CLI 后端共用答案校验和有界格式修正；API 的协议解析按原适配保持。
+
+逐个运行 `npm run test:editions`、`npm run test:editions:browser`，核对首次服务商、13 个现有适配器、凭据空白、无意外模型请求以及已有配置不被覆盖。Codex 操作见 [CODEX.md](CODEX.md)，WorkBuddy 安装/登录与账号同站点要求见 [WORKBUDDY.md](WORKBUDDY.md)，各服务商见 [API.md](API.md)。不要把 HTTP 健康成功、模拟协议测试或一个账号的用量验证说成所有账号都完成真实推理验收。

@@ -12,7 +12,7 @@ const header = `// ==UserScript==
 // @namespace    xuexitong-ai-assistant.public
 // @version      ${scriptVersion}
 // @description  仅处理未完成任务点，支持本地 Codex；不含任何账号或密钥
-// @supportURL   https://github.com/cc66611/xuexitong-codex-task-points/issues
+// @supportURL   https://github.com/cc66611/xuexitong-ai-task-points/issues
 // @updateURL    none
 // @downloadURL  none
 // @match        https://*.chaoxing.com/*

@@ -3,10 +3,12 @@
   "date": "2026-11-03",
   "channel": "task-points",
   "changes": [
-    "整理完整仅任务点版源码、用户教程、Agent教程及便携启动方式。",
-    "保留已完成优先、无任务点跳过、组合题/排序/连线与可见公式图片识别。",
-    "修复作业公共题图漏发和跨标签设置不一致，保留现有人工作答。"
+    "提供通用、Codex、WorkBuddy/CodeBuddy和多服务商API四个安装入口，共享全部任务点与答题适配。",
+    "各版本仅改变首次配置默认值，保留已有接口、凭据及文字/图片用途。",
+    "WorkBuddy与Codex共享有界文本格式修正和校验，新增多AI用户及Agent配置说明。"
   ],
   "taskPointsOnly": true,
-  "localVersion": "1.7.7.7"
+  "localVersion": "1.7.7.8",
+  "edition": "universal",
+  "providerPreset": "openai"
 }

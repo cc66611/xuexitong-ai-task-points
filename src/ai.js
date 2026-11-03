@@ -17,7 +17,10 @@
         codex: { label: '本地 Codex（可选）', protocol: 'codex', baseUrl: 'http://127.0.0.1:18763', vision: true },
         codebuddy: { label: '本地 CodeBuddy / WorkBuddy', protocol: 'codebuddy', baseUrl: 'http://127.0.0.1:18764', vision: true }
     };
-    const defaults = { provider: 'openai', ...presets.openai, model: '', key: '', jsonMode: false, reasoning: '', maxTokens: 8192 };
+    // Editions set only the first-use preset. Stored profiles keep their own
+    // provider, credentials and text/image assignments when switching editions.
+    const initialProvider=Object.hasOwn(presets,root.XxtRelease?.providerPreset)?root.XxtRelease.providerPreset:'openai';
+    const defaults = { provider: initialProvider, ...presets[initialProvider], model: '', key: '', jsonMode: false, reasoning: '', maxTokens: 8192 };
     function normalize(value = {}) {
         const c = { ...defaults, ...value };
         if (!presets[c.provider] || !['chat','responses','anthropic','gemini','codex','codebuddy'].includes(c.protocol)) throw new Error('服务商或 API 协议无效');

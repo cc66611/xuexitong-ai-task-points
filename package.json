@@ -1,11 +1,11 @@
 {
-  "name": "xuexitong-codex-task-points",
+  "name": "xuexitong-ai-task-points",
   "version": "1.7.7",
   "private": true,
-  "description": "学习通仅任务点定制版：本地 Codex、完整源码与用户/Agent教程",
+  "description": "学习通多AI仅任务点版：Codex、WorkBuddy与多服务商API；完整源码和双教程",
   "scripts": {
-    "build": "node scripts/build-task-only.mjs",
-    "test": "node --test tests/media-policy.test.mjs tests/audio.test.mjs tests/homework.test.mjs tests/short-answer.test.mjs tests/discussion.test.mjs tests/api.test.mjs tests/retry.test.mjs tests/models.test.mjs tests/updates.test.mjs tests/dispatch.test.mjs tests/text-ledger.test.mjs tests/profiles.test.mjs tests/personas.test.mjs tests/codex-launcher.test.mjs tests/codex-image.test.mjs tests/codebuddy.test.mjs tests/structured.test.mjs && node scripts/check-model-catalog.mjs && node scripts/check-public.mjs",
+    "build": "node scripts/build-editions.mjs",
+    "test": "node --test tests/media-policy.test.mjs tests/audio.test.mjs tests/homework.test.mjs tests/short-answer.test.mjs tests/discussion.test.mjs tests/api.test.mjs tests/retry.test.mjs tests/models.test.mjs tests/updates.test.mjs tests/dispatch.test.mjs tests/text-ledger.test.mjs tests/profiles.test.mjs tests/personas.test.mjs tests/codex-launcher.test.mjs tests/codex-image.test.mjs tests/codebuddy.test.mjs tests/structured.test.mjs tests/editions.test.mjs tests/install-server.test.mjs && node scripts/check-model-catalog.mjs && node scripts/check-public.mjs",
     "test:extended-types": "node tests/verify-extended-types.mjs",
     "test:completion-priority": "node tests/verify-completion-priority.mjs",
     "test:updates": "node tests/verify-updates.mjs",
@@ -57,7 +57,9 @@
     "package": "node scripts/package.mjs",
     "serve:install": "node scripts/serve-task-only.mjs",
     "test:task-points": "node tests/verify-task-points-only.mjs",
-    "test:formula-options": "node tests/verify-formula-options.mjs"
+    "test:formula-options": "node tests/verify-formula-options.mjs",
+    "test:editions": "node --test tests/editions.test.mjs",
+    "test:editions:browser": "node tests/verify-editions.mjs"
   },
   "engines": {
     "node": ">=22"
@@ -65,13 +67,13 @@
   "devDependencies": {
     "playwright": "1.62.1"
   },
-  "taskPointsVersion": "1.7.7.7",
+  "taskPointsVersion": "1.7.7.8",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cc66611/xuexitong-codex-task-points.git"
+    "url": "https://github.com/cc66611/xuexitong-ai-task-points.git"
   },
-  "homepage": "https://github.com/cc66611/xuexitong-codex-task-points",
+  "homepage": "https://github.com/cc66611/xuexitong-ai-task-points",
   "bugs": {
-    "url": "https://github.com/cc66611/xuexitong-codex-task-points/issues"
+    "url": "https://github.com/cc66611/xuexitong-ai-task-points/issues"
   }
 }

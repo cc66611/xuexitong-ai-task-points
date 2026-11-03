@@ -5,6 +5,7 @@ import {createHash} from 'node:crypto';
 const root=resolve(import.meta.dirname,'..');
 const {name:project,taskPointsVersion:version}=JSON.parse(readFileSync(resolve(root,'package.json'),'utf8'));
 const roots=['src','vendor','assets','tests','scripts','tools','docs','dist','.github','README.md','AGENTS.md','CONTRIBUTING.md','NOTICE.md','CHANGELOG.md','package.json','package-lock.json','.gitignore','.gitattributes','source-provenance.json','启动学习通助手.cmd','check-local-connection.ps1','仅任务点版说明.md'];
+roots.push('启动Codex助手.cmd','启动WorkBuddy助手.cmd','start-codex.cmd','start-workbuddy.cmd');
 function walk(path){return statSync(path).isDirectory()?readdirSync(path).filter(name=>!['local','node_modules','artifacts','output','.git','.playwright-cli'].includes(name)).flatMap(name=>walk(resolve(path,name))):[path];}
 const files=roots.flatMap(name=>walk(resolve(root,name))).sort();
 const manifest={project,version,files:files.map(path=>({path:relative(root,path).replaceAll('\\','/'),bytes:statSync(path).size,sha256:createHash('sha256').update(readFileSync(path)).digest('hex')}))};

@@ -79,6 +79,12 @@ test('login errors do not expose CLI raw tokens in response or service logs',asy
 test('official zero-exit unauthenticated CLI output is reported as login failure, not success or malformed answer',async()=>{
  const server=await bridge({XXT_TEST_CB_MODE:'auth-zero'});try{const response=await server.request('/solve',payload);assert.equal(response.status,422);const data=await response.json();assert.equal(data.code,'LOCAL_CLI_AUTH_REQUIRED');assert.match(data.error,/尚未登录/);const explanation=require('../src/personas.cjs').explain({code:data.code,status:422});assert.equal(explanation.title,'CodeBuddy 尚未登录');}finally{await server.stop();}
 });
+test('WorkBuddy text format repair shares the bounded local bridge path and backend identity',async()=>{
+ const server=await bridge({XXT_TEST_CB_MODE:'format-once'});try{const response=await server.request('/solve',payload);assert.equal(response.status,200);const data=await response.json();assert.equal(data.backend,'codebuddy');assert.deepEqual(data.answers[0].texts,['45']);const calls=JSON.parse(await readFile(server.record+'.calls.json','utf8'));assert.deepEqual(calls.map(c=>c.correction),[false,true]);}finally{await server.stop();}
+});
+test('WorkBuddy malformed text stops after one correction without guessing an answer',async()=>{
+ const server=await bridge({XXT_TEST_CB_MODE:'format-always'});try{const response=await server.request('/solve',payload);assert.equal(response.status,422);assert.equal((await response.json()).code,'MODEL_TEXT_REPAIR_FAILED');assert.equal(JSON.parse(await readFile(server.record+'.calls.json','utf8')).length,2);}finally{await server.stop();}
+});
 test('stop cancels CLI, releases busy lock only after process exits, and prevents late completion',async()=>{
  const server=await bridge({XXT_TEST_CB_DELAY:'30000'}),controller=new AbortController();
  const pending=server.request('/solve',payload,{signal:controller.signal});const rejected=assert.rejects(pending,/abort/i);

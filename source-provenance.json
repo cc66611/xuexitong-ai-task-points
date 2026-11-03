@@ -1,6 +1,6 @@
 {
-  "name": "xuexitong-codex-task-points",
-  "taskPointsVersion": "1.7.7.7",
+  "name": "xuexitong-ai-task-points",
+  "taskPointsVersion": "1.7.7.8",
   "upstream": {
     "repository": "https://github.com/Flyer2333/xuexitong-ai-assistant",
     "commit": "8b58f328455fbbad38d75399120d804803eb5a8d",
@@ -8,5 +8,11 @@
   },
   "preparedAt": "2026-11-03",
   "scope": "Complete portable source snapshot with task-point-only patches; local accounts, tokens, real-course fixtures, outputs and git history excluded.",
-  "licenseNotice": "NOTICE.md"
+  "licenseNotice": "NOTICE.md",
+  "editions": [
+    "universal",
+    "codex",
+    "workbuddy",
+    "api"
+  ]
 }

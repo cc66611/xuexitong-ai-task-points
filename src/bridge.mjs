@@ -80,12 +80,12 @@ async function solve(payload, signal, repairAllowed = true) {
         const contract='逐题输出检查表：'+JSON.stringify(payload.questions.map(q=>({id:q.id,type:q.type,textsCount:['blank','essay','ordering','matching'].includes(q.type)?q.slots:0})))+'。组合题的每个子题都有独立id，只回答题目数据中的这些id，不按截图里的整组大题合并答案。无法提供文本答案时允许texts=[]，但必须同时readable=false、confidence低于0.8，不能用空字符串或解释冒充答案。\n';
         const correction=payload.formatCorrection?'格式修正数据（仅修正这些题目的字段与输入框数量，保留能确认的答案；无法确认时如实返回不可读，不猜测）：'+JSON.stringify(payload.formatCorrection)+'\n':'';
         const fullPrompt=language+'\n'+contract+correction+readingContext+prompt;
+        let result;
         if (backend === 'codebuddy') {
             const {runCodebuddy} = await import('./codebuddy-runner.mjs');
-            const result = await runCodebuddy({prompt:fullPrompt,images,model,cwd:job,
+            result = await runCodebuddy({prompt:fullPrompt,images,model,cwd:job,
                 schema:JSON.parse(await readFile(join(here,'answer-schema.json'),'utf8')),signal,onChild:value=>{child=value;}});
-            return {answers:core.validateAnswers(payload.questions,result,{allowUncertain:true}),backend};
-        }
+        }else{
         await new Promise((accept, reject) => {
             child = spawn(codexPath, args, { shell: false, windowsHide: true, stdio: ['pipe', 'ignore', 'pipe'], signal,
                 env: { ...process.env } });
@@ -105,9 +105,11 @@ async function solve(payload, signal, repairAllowed = true) {
             });
             signal.throwIfAborted();child.stdin.end(fullPrompt);
         });
-        const result = JSON.parse(await readFile(output, 'utf8'));
+        result = JSON.parse(await readFile(output, 'utf8'));
+        }
         if(captureRequest)await writeFile(join(stateDir,'preview-debug-result.json'),JSON.stringify(result));
-        try{return { answers: core.validateAnswers(payload.questions, result, { allowUncertain: true }) };}
+        const identify=value=>backend==='codebuddy'?{...value,backend}:value;
+        try{return identify({ answers: core.validateAnswers(payload.questions, result, { allowUncertain: true }) });}
         catch(error){
             if(error.code!=='MODEL_TEXT_ANSWER_INVALID')throw error;
             // Repair once, only for malformed text answers. Preserve every
@@ -127,7 +129,7 @@ async function solve(payload, signal, repairAllowed = true) {
             for(const item of manifest){const questionIds=item.questionIds.filter(id=>ids.has(id));if(questionIds.length){retryImages.push(payload.images[item.image-1]);retryManifest.push({image:retryImages.length,questionIds});}}
             const fixed=await solve({...payload,questions:invalid.map(x=>x.q),images:retryImages,imageManifest:retryManifest,
                 history:[],formatCorrection:invalid.map(x=>({id:x.q.id,expectedTexts:x.q.slots,previousAnswer:x.answer}))},signal,false);
-            return{answers:core.validateAnswers(payload.questions,{answers:payload.questions.map(q=>[...valid,...fixed.answers].find(a=>a.id===q.id))},{allowUncertain:true})};
+            return identify({answers:core.validateAnswers(payload.questions,{answers:payload.questions.map(q=>[...valid,...fixed.answers].find(a=>a.id===q.id))},{allowUncertain:true})});
         }
     } finally {
         // Only remove the unique directory just created underneath local/.

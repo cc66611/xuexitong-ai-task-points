@@ -132,7 +132,7 @@
         const section=make('section');section.className='xxt-homework-options';section.dataset.homeworkOptions='true';section.setAttribute('aria-label','作业设置');
         const beta=make('p');beta.dataset.homeworkBeta='true';
         const betaTitle=make('strong','作业功能 · 测试版');
-        const betaLink=make('a','提交 Issue');betaLink.href='https://github.com/cc66611/xuexitong-codex-task-points/issues/new/choose';betaLink.target='_blank';betaLink.rel='noopener noreferrer';
+        const betaLink=make('a','提交 Issue');betaLink.href='https://github.com/cc66611/xuexitong-ai-task-points/issues/new/choose';betaLink.target='_blank';betaLink.rel='noopener noreferrer';
         beta.append(betaTitle,make('br'),doc.createTextNode('作业功能仍在开发完善中，欢迎试用并反馈问题、意见和建议。可通过 '),betaLink,doc.createTextNode(' 一起完善功能。'));section.append(beta);
         const subjective=group('主观题',[['skip','简答题不回答'],['ai','简答题由AI回答并填入']],true);
         const after=group('作答后',[['none','作业作答后不提交'],['save','作业作答后暂时保存'],['submit','作业作答后直接提交']]);

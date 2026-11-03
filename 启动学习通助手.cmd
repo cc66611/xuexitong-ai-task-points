@@ -1,28 +1,20 @@
 @echo off
 setlocal EnableExtensions
-set "XXT_APP_DIR=%~dp0"
-if not exist "%XXT_APP_DIR%package.json" (
-  echo Keep this launcher in the complete project folder beside package.json.
-  pause
-  exit /b 1
-)
-cd /d "%XXT_APP_DIR%"
+cd /d "%~dp0"
 if errorlevel 1 exit /b 1
-if defined XXT_CODEX_BIN if exist "%XXT_CODEX_BIN%" goto codex_ready
-set "XXT_CODEX_BIN=%APPDATA%\npm\node_modules\@openai\codex\node_modules\@openai\codex-win32-x64\vendor\x86_64-pc-windows-msvc\bin\codex.exe"
-if not exist "%XXT_CODEX_BIN%" set "XXT_CODEX_BIN=%APPDATA%\npm\node_modules\@openai\codex-win32-x64\vendor\x86_64-pc-windows-msvc\bin\codex.exe"
-if not exist "%XXT_CODEX_BIN%" (
-  echo Codex native executable was not found. Install the official Codex CLI or set XXT_CODEX_BIN.
-  pause
-  exit /b 1
-)
-:codex_ready
-if /i "%~1"=="--check" (
-  echo package.json: OK
-  echo Codex executable: OK
-  exit /b 0
-)
-echo Choose a model and reasoning level. Keep this service window open.
-call npm.cmd --prefix "%XXT_APP_DIR%" run start:codex
-echo Local connection has stopped.
+if not exist package.json exit /b 1
+echo 1. Codex account connection
+echo 2. WorkBuddy / CodeBuddy account connection
+echo 3. API setup guide - no local service needed
+choice /c 123 /n /m "Choose 1, 2 or 3: "
+if errorlevel 3 goto api
+if errorlevel 2 goto workbuddy
+call "%~dp0start-codex.cmd"
+exit /b
+:workbuddy
+call "%~dp0start-workbuddy.cmd"
+exit /b
+:api
+echo Install dist/xuexitong-api.user.js in Tampermonkey.
+echo Read docs/API.md and configure your own provider, model and API key.
 pause

@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         超星学习通自动化脚本（支持接入各种主流AI模型api）
 // @namespace    xuexitong-ai-assistant.public
-// @version      1.7.7.7
-// @description  仅处理未完成任务点，支持本地 Codex；不含任何账号或密钥
-// @supportURL   https://github.com/cc66611/xuexitong-codex-task-points/issues
+// @version      1.7.7.8
+// @description  多 AI 通用版；仅处理未完成任务点；无内置账号或密钥
+// @supportURL   https://github.com/cc66611/xuexitong-ai-task-points/issues
 // @updateURL    none
 // @downloadURL  none
 // @match        https://*.chaoxing.com/*

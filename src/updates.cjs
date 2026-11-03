@@ -1,7 +1,7 @@
 (function (root) {
     'use strict';
     const release = root.XxtRelease || (typeof module === 'object' && module.exports ? require('./release.json') : null);
-    const base = 'https://raw.githubusercontent.com/cc66611/xuexitong-codex-task-points/main/dist/';
+    const base = 'https://raw.githubusercontent.com/cc66611/xuexitong-ai-task-points/main/dist/';
     const manifestUrl = base + 'release.json', installUrl = base + 'xuexitong-ai-assistant.user.js';
     const versionPattern = /^\d{1,4}\.\d{1,4}\.\d{1,4}$/;
     function compare(a,b) {
@@ -64,7 +64,7 @@
         const steps=document.createElement('ol');
         for(const text of ['点击“更新至新版本”，在油猴打开的安装/更新页确认更新；脚本不能自行替换已安装代码。','也可点击浏览器扩展中的油猴图标 → 管理面板 → 找到本脚本 → 检查更新；或打开脚本编辑页 → 设置 → 更新 → 检查用户脚本的更新。','若旧版“更新 URL”为空：填入下方元数据地址、保存，再点检查更新。地址框不能编辑或卡在 Raw 中转页时，下载仓库 ZIP，解压 dist 中的 .user.js，用记事本全选复制，再到油猴编辑原脚本，全选替换并保存。不要删除原脚本，以便保留设置。','更新后刷新课程页面，核对面板版本；这里只展示最新版的本次更新内容。']) {const li=document.createElement('li');li.textContent=text;steps.append(li);}
         const meta=document.createElement('input'); meta.readOnly=true; meta.value=base+'xuexitong-ai-assistant.meta.js';meta.setAttribute('aria-label','油猴更新 URL');
-        const zip=document.createElement('a');zip.textContent='下载仓库 ZIP（备用）';zip.href='https://github.com/cc66611/xuexitong-codex-task-points/archive/refs/heads/main.zip';zip.target='_blank';zip.rel='noopener noreferrer';
+        const zip=document.createElement('a');zip.textContent='下载仓库 ZIP（备用）';zip.href='https://github.com/cc66611/xuexitong-ai-task-points/archive/refs/heads/main.zip';zip.target='_blank';zip.rel='noopener noreferrer';
         const boundary=document.createElement('small');boundary.textContent='WLAN 限制仅约束本面板的自动检查；油猴自身的更新计划由油猴设置管理。检查只读取项目公开版本文件，不调用 AI、不发送密钥或课程信息。';
         instructions.append(summary,steps,meta,zip,boundary);
         let busy=false;

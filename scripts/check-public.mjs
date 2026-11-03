@@ -14,7 +14,7 @@ for(const path of paths){
  if(!/\.(js|cjs|mjs|md|json|yml|yaml|txt|cmd|ps1|html|css|svg)$/.test(name))continue;
  const raw=readFileSync(path,'utf8');
  // Exempt only the exact, hash-verified public theme asset block from the private PNG check.
- const text=['dist/xuexitong-ai-assistant.user.js','dist/xuexitong-task-points-only.user.js'].includes(name) ? raw.replace(themeAssetCode(),'') : raw;
+ const text=/^dist\/xuexitong-(?:ai-assistant|task-points-only|codex|workbuddy|api)\.user\.js$/.test(name) ? raw.replace(themeAssetCode(),'') : raw;
  if(name !== 'scripts/check-public.mjs')assert(!/[A-Z]:[/\\](Users|Codex)[/\\]|XxtHongyaAsset|data:image\/png;base64,[A-Za-z0-9+/]{500}/.test(text),`Personal asset/path in ${name}`);
  assert(!/GM_setValue\(['"]xxt-codex-token['"],\s*['"][a-f0-9]{64}/.test(text),`Paired token in ${name}`);
  assert(!/sk-[A-Za-z0-9_-]{20,}/.test(text),`Possible key in ${name}`);
@@ -36,5 +36,9 @@ const meta=readFileSync(resolve(root,'dist/xuexitong-ai-assistant.meta.js'),'utf
 assert(meta.includes('@updateURL    none')&&meta.includes('@downloadURL  none'));
 for(const name of ['dist/xuexitong-ai-assistant.user.js','dist/xuexitong-task-points-only.user.js']){const text=readFileSync(resolve(root,name),'utf8');assert(text.includes('taskPointsOnly\":true'),`Unrestricted build: ${name}`);assert(text.includes(`@version      ${taskPointsVersion}`));assert(text.includes(`localVersion\":\"${taskPointsVersion}\"`));}
 assert.equal(release.localVersion,taskPointsVersion);assert.equal(release.taskPointsOnly,true);
+const editions=JSON.parse(readFileSync(resolve(root,'dist/editions.json'),'utf8'));
+assert.equal(editions.version,taskPointsVersion);assert.equal(editions.editions.length,4);
+const coreBody=text=>text.slice(text.indexOf('(() => {')).replace(/globalThis\.XxtRelease = \{[^\n]+\};/,'RELEASE_METADATA');
+for(const edition of editions.editions){const text=readFileSync(resolve(root,'dist',edition.file),'utf8'),meta=JSON.parse(text.match(/globalThis\.XxtRelease = (\{[^\n]+\});/)[1]);assert.equal(meta.edition,edition.id);assert.equal(meta.providerPreset,edition.providerPreset);assert.equal(meta.taskPointsOnly,true);assert.equal(meta.localVersion,taskPointsVersion);assert.equal(coreBody(text),coreBody(script),'Edition cores diverged');assert(readFileSync(resolve(root,edition.guide),'utf8').trim());}
 console.log(`Public build checked: ${paths.length} files, source sync and JavaScript syntax; theme assets hash-verified; no known personal paths or paired credentials.`);
 

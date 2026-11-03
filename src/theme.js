@@ -24,7 +24,7 @@
         const section=document.createElement('details'),heading=document.createElement('summary'),rows=document.createElement('div'),note=document.createElement('p'),link=document.createElement('a');
         section.dataset.savedProfiles='true';rows.className='xxt-profile-list';
         note.textContent='密钥仅保存在此浏览器的油猴存储中，调用时发送到你设置的接口。没有作者收集密钥的服务器；这不是加密保险箱。删除这里只移除本地配置，不撤销服务商密钥。';
-        link.textContent='查看密钥与隐私说明';link.href='https://github.com/cc66611/xuexitong-codex-task-points/blob/main/docs/SECURITY.md';link.target='_blank';link.rel='noopener noreferrer';
+        link.textContent='查看密钥与隐私说明';link.href='https://github.com/cc66611/xuexitong-ai-task-points/blob/main/docs/SECURITY.md';link.target='_blank';link.rel='noopener noreferrer';
         const feedback=document.createElement('p');feedback.setAttribute('role','status');feedback.dataset.purposeFeedback='true';
         function render(){
             const saved=vault().list();heading.textContent=`已保存接口 · ${saved.length}`;rows.replaceChildren();
@@ -83,7 +83,7 @@
         field('provider','服务商',Object.entries(A.presets).map(([key,value]) => [key,value.label]));
         const customHelp = document.createElement('small'); customHelp.dataset.aiCustomHelp = 'true'; customHelp.hidden = true;
         const customGuide = document.createElement('a'); customGuide.textContent = '自定义 / OpenAI 兼容配置教程（含 Ollama 等 22 种工具）';
-        customGuide.href = 'https://github.com/cc66611/xuexitong-codex-task-points/blob/main/docs/CUSTOM_API.md'; customGuide.target = '_blank'; customGuide.rel = 'noopener noreferrer';
+        customGuide.href = 'https://github.com/cc66611/xuexitong-ai-task-points/blob/main/docs/CUSTOM_API.md'; customGuide.target = '_blank'; customGuide.rel = 'noopener noreferrer';
         customHelp.append(customGuide); fields.provider.closest('label').after(customHelp);
         field('protocol','接口协议',[['chat','OpenAI Chat Completions'],['responses','OpenAI Responses'],['anthropic','Claude Messages'],['gemini','Gemini generateContent'],['codex','本地 Codex'],['codebuddy','本地 CodeBuddy / WorkBuddy']]);
         field('baseUrl','Base URL（不带具体接口路径）');
@@ -97,12 +97,12 @@
             customHelp.hidden = fields.provider.value !== 'custom';
             const local=['codex','codebuddy'].includes(fields.protocol.value);fields.key.placeholder=local?'请输入本地服务生成的连接码':'请输入该服务商的 API Key';keyHelp.replaceChildren();keyHelp.hidden=!local;if(!local)return;
             if(fields.protocol.value==='codebuddy'){
-                const download=document.createElement('a');download.textContent='① 下载完整源码 ZIP';download.href='https://github.com/cc66611/xuexitong-codex-task-points/archive/refs/heads/main.zip';download.target='_blank';download.rel='noopener noreferrer';
-                const guide=document.createElement('a');guide.dataset.workbuddyGuide='true';guide.textContent='查看 WorkBuddy 完整教程';guide.href='https://github.com/cc66611/xuexitong-codex-task-points/blob/main/docs/WORKBUDDY.md';guide.target='_blank';guide.rel='noopener noreferrer';
+                const download=document.createElement('a');download.textContent='① 下载完整源码 ZIP';download.href='https://github.com/cc66611/xuexitong-ai-task-points/archive/refs/heads/main.zip';download.target='_blank';download.rel='noopener noreferrer';
+                const guide=document.createElement('a');guide.dataset.workbuddyGuide='true';guide.textContent='查看 WorkBuddy 完整教程';guide.href='https://github.com/cc66611/xuexitong-ai-task-points/blob/main/docs/WORKBUDDY.md';guide.target='_blank';guide.rel='noopener noreferrer';
                 keyHelp.append(download,document.createElement('br'),'② 解压后按教程安装官方 CodeBuddy CLI，运行 npm run login:codebuddy，登录与 WorkBuddy 相同站点、相同账号。',document.createElement('br'),'③ 运行 npm run start:codebuddy，保持服务窗口开启。',document.createElement('br'),'④ 打开 src/local/codebuddy-token.txt，复制完整连接码。默认地址 http://127.0.0.1:18764。',document.createElement('br'),'模型由服务启动时设置。测试和答题可能消耗积分；请在官方用量明细核对。 ',guide);return;
             }
-            const download=document.createElement('a');download.textContent='① 下载本地服务 ZIP';download.href='https://github.com/cc66611/xuexitong-codex-task-points/archive/refs/heads/main.zip';download.target='_blank';download.rel='noopener noreferrer';
-            const guide=document.createElement('a');guide.textContent='查看完整安装教程';guide.href='https://github.com/cc66611/xuexitong-codex-task-points/blob/main/docs/USER_GUIDE.md';guide.target='_blank';guide.rel='noopener noreferrer';
+            const download=document.createElement('a');download.textContent='① 下载本地服务 ZIP';download.href='https://github.com/cc66611/xuexitong-ai-task-points/archive/refs/heads/main.zip';download.target='_blank';download.rel='noopener noreferrer';
+            const guide=document.createElement('a');guide.textContent='查看完整安装教程';guide.href='https://github.com/cc66611/xuexitong-ai-task-points/blob/main/docs/USER_GUIDE.md';guide.target='_blank';guide.rel='noopener noreferrer';
             keyHelp.append(download,document.createElement('br'),'② 解压后进入含 package.json 的文件夹，在地址栏输入 powershell 打开终端。',document.createElement('br'),'③ 运行 npm run start:codex，用 ↑↓ 和回车选择模型、推理强度，服务随后自动启动。',document.createElement('br'),'④ 打开 src/local/bridge-token.txt，复制完整连接码填到这里。',document.createElement('br'),'请保持服务窗口开启；关闭后重新启动原服务。地址或连接码变化时需更新配置，无需另填 OpenAI API Key。 ',guide);
         }
         field('maxTokens','最大输出 token'); fields.maxTokens.type = 'number'; fields.maxTokens.min = '256'; fields.maxTokens.max = '32768';
@@ -311,7 +311,7 @@
         const feedback = make('footer','xxt-feedback'), feedbackLinks = make('div','xxt-feedback-links');
         for (const [label,template] of [['Bug / 问题反馈','bug_report.yml'],['功能建议','feature_request.yml']]) {
             const link = document.createElement('a'); link.textContent = label;
-            link.href = `https://github.com/cc66611/xuexitong-codex-task-points/issues/new?template=${template}`;
+            link.href = `https://github.com/cc66611/xuexitong-ai-task-points/issues/new?template=${template}`;
             link.target = '_blank'; link.rel = 'noopener noreferrer'; feedbackLinks.append(link);
         }
         const feedbackNote = document.createElement('div'); feedbackNote.textContent = '问题反馈请附脚本版本、复现步骤和面板提示；功能建议请说明具体使用场景，方便作者定位和改进。';
@@ -322,7 +322,7 @@
         const authorNote = document.createElement('div'); authorNote.textContent = '脚本根据作者自己的实际使用需求编写，并持续完善。遇到暂不支持的场景，或有希望增加的功能，欢迎及时反馈；作者会第一时间跟进，评估后补充相应设置和功能。';
         feedbackCopy.append(authorNote,feedbackNote,privacyNote); feedbackDetails.append(feedbackSummary,feedbackCopy);
         feedback.append(feedbackLinks,feedbackDetails);
-        const support=document.createElement('a');support.textContent='使用教程';support.href='https://github.com/cc66611/xuexitong-codex-task-points/blob/main/docs/USER_GUIDE.md';support.target='_blank';support.rel='noopener noreferrer';feedbackLinks.append(support);
+        const support=document.createElement('a');support.textContent='使用教程';support.href='https://github.com/cc66611/xuexitong-ai-task-points/blob/main/docs/USER_GUIDE.md';support.target='_blank';support.rel='noopener noreferrer';feedbackLinks.append(support);
         const profiles=profileManager(onAiChange),updates=XxtUpdates.create({bannerHost:shell});
         actions.className = 'xxt-actions'; body.append(actions,status,statusCard,foregroundNote,modeLabel,modeNote,selectedSummary,routingNote,aiForm,profiles,settings,details,...(runLog ? [runLog] : []),...(savedLog?[savedLog]:[]),updates,feedback); header.append(name); shell.append(scene,header,picker,themeFeedback,body); panel.replaceChildren(shell,mascot,fold);
         const positionScene=()=>{

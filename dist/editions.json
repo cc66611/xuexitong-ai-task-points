@@ -1,0 +1,36 @@
+{
+  "version": "1.7.7.8",
+  "sharedCore": true,
+  "installOnlyOne": true,
+  "preservesExistingProfiles": true,
+  "editions": [
+    {
+      "id": "universal",
+      "name": "多 AI 通用版",
+      "providerPreset": "openai",
+      "file": "xuexitong-task-points-only.user.js",
+      "guide": "docs/USER_GUIDE.md"
+    },
+    {
+      "id": "codex",
+      "name": "Codex 账号版",
+      "providerPreset": "codex",
+      "file": "xuexitong-codex.user.js",
+      "guide": "docs/CODEX.md"
+    },
+    {
+      "id": "workbuddy",
+      "name": "WorkBuddy / CodeBuddy 账号版",
+      "providerPreset": "codebuddy",
+      "file": "xuexitong-workbuddy.user.js",
+      "guide": "docs/WORKBUDDY.md"
+    },
+    {
+      "id": "api",
+      "name": "多服务商 API 版",
+      "providerPreset": "openai",
+      "file": "xuexitong-api.user.js",
+      "guide": "docs/API.md"
+    }
+  ]
+}
